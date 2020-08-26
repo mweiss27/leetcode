@@ -1,39 +1,3 @@
-function ListNode(val, next) {
-  this.val = val === undefined ? 0 : val;
-  this.next = next === undefined ? null : next;
-}
-
-var toOrderedArray = function(l1) {
-  const result = []
-  let current = l1
-  while (current != null) {
-    result.unshift(current.val)
-    current = current.next
-  }
-
-  return result
-}
-
-var toReversedLinkedList = function(arr) {
-  const nodes = arr.reverse().map(element => new ListNode(element, null))
-  arr.forEach((element, index) => {
-    nodes[index].next = nodes[index + 1] || null
-  })
-
-  return nodes[0]
-}
-
-var digitsArrayToNumber = function(arr) {
-  return parseInt(arr.join(""))
-}
-
-var numberToDigitsArray = function(val) {
-  return Number(val)
-    .toLocaleString('fullwide', {useGrouping:false})
-    .split("")
-    .map(digitStr => parseInt(digitStr))
-}
-
 /**
  * Definition for singly-linked list.
  * function ListNode(val, next) {
@@ -47,30 +11,59 @@ var numberToDigitsArray = function(val) {
  * @return {ListNode}
  */
 var addTwoNumbers = function (l1, l2) {
-  const orderedArr1 = toOrderedArray(l1)
-  const orderedArr2 = toOrderedArray(l2)
-  console.log(`orderedArr1: `, orderedArr1, `orderedArr2: `, orderedArr2)
-  
-  const arr1Value = digitsArrayToNumber(orderedArr1)
-  const arr2Value = digitsArrayToNumber(orderedArr2)
-  console.log(`arr1Value: `, arr1Value, `arr2Values: `, arr2Value)
+  let dummy = new ListNode();
+  let current = dummy;
+  let carry = 0;
 
-  const result = arr1Value + arr2Value;
-  console.log(`result: `, result)
+  while (l1 != null || l2 != null) {
+    const l1Value = l1 != null ? l1.val : 0;
+    const l2Value = l2 != null ? l2.val : 0;
 
-  const resultDigitsArray = numberToDigitsArray(result)
-  console.log(`resultDigitsArray: `, resultDigitsArray)
-  
-  const r1 = toReversedLinkedList(resultDigitsArray)
+    let added = l1Value + l2Value + carry;
+    carry = 0;
+    if (added >= 10) {
+      carry = 1;
+      added -= 10;
+    }
 
-  return r1
+    current.next = new ListNode()
+    current = current.next
+    current.val = added;
+
+    l1 = l1 != null ? l1.next : null;
+    l2 = l2 != null ? l2.next : null;
+  }
+
+  if (carry > 0) {
+    current.next = new ListNode()
+    current.next.val = carry
+  }
+
+  return dummy.next;
 };
 
+let l3 = new ListNode(3)
+let l2 = new ListNode(4, l3)
+let l1 = new ListNode(2, l2)
 
-const arr1 = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-const arr2 = [5,6,4]
+let r3 = new ListNode(4)
+let r2 = new ListNode(6, r3)
+let r1 = new ListNode(5, r2)
 
-const l1 = toReversedLinkedList(arr1.reverse())
-const l2 = toReversedLinkedList(arr2.reverse())
+console.log(printLinkedList(addTwoNumbers(l1, r1)))
 
-console.log(addTwoNumbers(l1, l2))
+function ListNode(val, next) {
+  this.val = val === undefined ? 0 : val;
+  this.next = next === undefined ? null : next;
+}
+
+function printLinkedList(head) {
+  let current = head;
+  let result = "";
+  while (current != null) {
+    result += `${current.val} -> `;
+    current = current.next;
+  }
+
+  return result;
+}
